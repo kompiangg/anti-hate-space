@@ -20,7 +20,7 @@ export default function CreatePromptPage() {
     setSubmitting(true);
 
     try {
-      const res = await fetch("/api/prompt/new", {
+      const res = await fetch("/api/posts/new", {
         method: "POST",
         body: JSON.stringify({
           prompt: post.prompt,

@@ -1,80 +1,101 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import TweetCard from "./TweetCard";
+import PostCard from "@components/PostCard";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-export function TweetCardList({
-    data,
-    handleTagClick,
-    handleUpdate,
-    handleDelete,
-}) {
-    return (
-        <div className="space-y-6 mt-10">
-            {data.map((tweet) => {
-                return (
-                    <TweetCard />
-                );
-            })}
-        </div>
-    );
+export function PostCardList({ posts, handleUpdate, handleDelete }) {
+  return (
+    <div className="mt-10 space-y-6">
+      {posts.map((post) => {
+        return (
+          <PostCard
+            key={post.id}
+            post={post}
+            handleDelete={handleDelete}
+            handleUpdate={handleUpdate}
+          />
+        );
+      })}
+    </div>
+  );
 }
 
 export default function Feed() {
-    const [tweets, setTweets] = useState([]);
+  const [posts, setPost] = useState([]);
+  const [content, setContent] = useState({
+    content: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const router = useRouter();
+  const { data: session } = useSession();
 
-    const handleSearchChange = () => { };
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
 
-    useEffect(() => {
-        (async () => {
-            // const res = await fetch("/api/prompt", { cache: "no-store" });
-            // const data = await res.json();
-            const data = [{
-                _id: 1,
-                creator: {}
-            }, {
-                _id: 1,
-                creator: {}
-            }, {
-                _id: 1,
-                creator: {}
+    const body = {
+      content: content.content,
+      user_id: session?.user.id,
+    };
+
+    const res = await fetch("/api/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = await res.json();
+    setPost([data.data, ...posts]);
+    setContent({ content: "" });
+    setSubmitting(false);
+  };
+
+  useEffect(() => {
+    (async () => {
+      const res = await fetch("/api/posts", { cache: "no-store" });
+      const data = await res.json();
+      setPost(data.data);
+    })();
+  }, []);
+
+  return (
+    <section className="feed">
+      <div className="flex-start w-full rounded-lg bg-white p-6">
+        <Image
+          src={session?.user.image}
+          alt="Profile Picture"
+          className="rounded-full "
+          width={40}
+          height={40}
+        />
+        <form className="flex- relative w-full" onSubmit={(e) => onSubmit(e)}>
+          <textarea
+            placeholder="Tuliskan apa yang anda pikirkan..."
+            value={content.content}
+            onChange={(e) =>
+              setContent({ ...content, content: e.target.value })
             }
-            ]
-            setTweets(data);
-        })();
-    }, []);
+            required
+            className="search_input"
+          />
 
-    return (
-        <section className="feed">
-            <div className="tweet_input bg-white p-6 rounded-lg shadow-md w-full">
-
-                <div className="flex items-center p-4 mb-7 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50" role="alert">
-                    <svg className="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                    </svg>
-                    <span className="sr-only">Info</span>
-                    <div>
-                        <span className="font-medium">Gagal mengunggah!</span> Unggahan terdeteksi mengandung ujaran kebencian.
-                    </div>
-                </div>
-
-                <form onSubmit={() => { }}>
-                    <div className="flex">
-                        <img src="https://placekitten.com/40/40" alt="Profile Picture" className="w-10 h-10 rounded-full"></img>
-                        <div className="input_wrapper ml-4 w-full">
-                            <textarea className="mb-4 p-2 w-full outline-none min-h-[100px]" placeholder="Apa yang anda pikirkan?"></textarea>
-
-
-                            <div className="button_wrapper flex flex-end">
-                                <button className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-full">
-                                    Unggah
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <TweetCardList data={tweets} />
-        </section>
-    );
+          <div className="button_wrapper flex-end mt-6 flex">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="rounded-full bg-violet-500 px-4 py-2 font-bold text-white hover:bg-violet-700"
+            >
+              Unggah
+            </button>
+          </div>
+        </form>
+      </div>
+      <PostCardList posts={posts} />
+    </section>
+  );
 }

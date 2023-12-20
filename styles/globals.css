@@ -57,7 +57,11 @@
   /*   radial-gradient(at 33% 50%, hsla(222, 67%, 73%, 1) 0px, transparent 50%), */
   /*   radial-gradient(at 79% 53%, hsla(343, 68%, 79%, 1) 0px, transparent 50%); */
 
-  background-image: radial-gradient(rgb(233, 213, 255), rgb(192, 132, 252), rgb(107, 33, 168));
+  background-image: radial-gradient(
+    rgb(233, 213, 255),
+    rgb(192, 132, 252),
+    rgb(107, 33, 168)
+  );
   position: absolute;
   content: "";
   width: 100%;
@@ -103,8 +107,8 @@
   @apply bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent;
 }
 
-.purple_gradient{
-  @apply bg-gradient-to-r from-violet-500 bg-violet-800 bg-clip-text text-transparent;
+.purple_gradient {
+  @apply bg-violet-800 bg-gradient-to-r from-violet-500 bg-clip-text text-transparent;
 }
 
 .desc {
@@ -112,7 +116,7 @@
 }
 
 .search_input {
-  @apply block w-full rounded-md border border-gray-200 bg-white py-2.5 pl-5 pr-12 font-satoshi text-sm font-medium shadow-lg focus:border-black focus:outline-none focus:ring-0;
+  @apply block w-full rounded-md border-none bg-white py-2.5 pl-5 pr-12 font-satoshi text-sm font-medium  focus:border-black focus:outline-none focus:ring-0;
 }
 
 .copy_btn {
@@ -156,7 +160,8 @@
 
 /* PromptCard Component */
 .prompt_card {
-  @apply h-fit w-full flex-1 break-inside-avoid rounded-lg border border-gray-300 bg-white/20 bg-clip-padding p-6 pb-4 backdrop-blur-lg backdrop-filter md:w-[360px];
+  @apply h-fit flex-1 break-words rounded-lg border border-gray-300 bg-white/20 bg-clip-padding p-6 pb-4 backdrop-blur-lg backdrop-filter;
+  width: 36rem;
 }
 
 .flex-center {

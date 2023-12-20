@@ -1,24 +1,66 @@
-import { Schema, model, models } from "mongoose";
+import supabase from "@utils/supabase";
 
-const UserSchema = new Schema({
-  email: {
-    type: String,
-    unique: [true, "Email already exists!"],
-    required: [true, "Email is required!"],
-  },
-  username: {
-    type: String,
-    required: [true, "Username is required!"],
-    match: [
-      /^(?=.{8,50}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
-      "Username invalid, it should contain 8-20 alphanumeric letters and be unique!",
-    ],
-  },
-  image: {
-    type: String,
-  },
-});
+class User {
+  constructor({ id, name, username, email, image }) {
+    this.id = id;
+    this.name = name;
+    this.username = username;
+    this.email = email;
+    this.image = image;
+  }
 
-const User = models.User || model("User", UserSchema);
+  async save() {
+    const { data, error } = await supabase.from("users").upsert([
+      {
+        name: this.name,
+        username: this.username,
+        email: this.email,
+        image: this.image,
+      },
+    ]);
+
+    if (error) {
+      throw error;
+    }
+
+    return;
+  }
+
+  static async findByEmail(email) {
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", email)
+      .limit(1);
+
+    if (error) {
+      throw error;
+    }
+
+    if (data.length === 0) {
+      return undefined;
+    }
+
+    return new User(data[0]);
+  }
+
+  static async findByID(id) {
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", id)
+      .limit(1);
+
+    if (error) {
+      throw error;
+    }
+
+    if (data.length === 0) {
+      return undefined;
+    }
+
+    return new User(data[0]);
+  }
+}
 
 export default User;

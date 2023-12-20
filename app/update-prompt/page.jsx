@@ -19,7 +19,7 @@ export default function UpdatePromptPage({ params }) {
 
   useEffect(() => {
     (async () => {
-      const res = await fetch(`/api/prompt/${promptID}`);
+      const res = await fetch(`/api/posts/${promptID}`);
       const data = await res.json();
 
       setPrompt({ ...prompt, prompt: data.prompt, tag: data.tag });
@@ -31,7 +31,7 @@ export default function UpdatePromptPage({ params }) {
     setEditing(true);
 
     try {
-      const res = await fetch(`/api/prompt/${promptID}`, {
+      const res = await fetch(`/api/posts/${promptID}`, {
         method: "PATCH",
         body: JSON.stringify({
           prompt: prompt.prompt,

@@ -30,7 +30,7 @@ export default function Form({
           <textarea
             value={post.prompt}
             onChange={(e) => setPost({ ...post, prompt: e.target.value })}
-            placeholder="Write your prompt here..."
+            placeholder="Tuliskan apa yang anda akan post..."
             required
             className="form_textarea"
           />

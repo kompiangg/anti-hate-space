@@ -1,6 +1,5 @@
 import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
-import { initDBConnection } from "@utils/database";
 import User from "@models/user";
 
 const handler = NextAuth({
@@ -12,37 +11,46 @@ const handler = NextAuth({
   ],
   callbacks: {
     async session({ session }) {
-      const sessionUser = await User.findOne({
-        email: session.user.email,
-      });
-
-      session.user.id = sessionUser._id.toString();
+      const user = await User.findByEmail(session.user.email);
+      session.user.id = user.id;
 
       return session;
     },
     async signIn({ profile }) {
       try {
-        await initDBConnection();
+        const user = await User.findByEmail(profile.email);
 
-        const userExist = await User.findOne({
-          email: profile.email,
-        });
+        if (!user) {
+          const username = profile.email.split("@")[0];
+          const slug = generateRandomString(5);
 
-        if (!userExist) {
-          await User.create({
+          const user = new User({
             email: profile.email,
-            username: profile.name.replace(" ", "").toLowerCase(),
+            user: profile.name,
             image: profile.picture,
+            name: profile.name,
+            username: username + slug,
           });
+          await user.save();
         }
 
         return true;
       } catch (error) {
-        console.log(error);
+        console.error("signin error", error);
         return false;
       }
     },
   },
 });
+
+function generateRandomString(length) {
+  let result = "";
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
 
 export { handler as GET, handler as POST };

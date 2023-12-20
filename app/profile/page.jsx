@@ -12,7 +12,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     (async () => {
-      const res = await fetch(`/api/users/${session?.user.id}/prompts`, {
+      const res = await fetch(`/api/users/${session?.user.id}/posts`, {
         cache: "no-store",
       });
       const data = await res.json();
