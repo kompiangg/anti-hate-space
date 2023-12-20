@@ -3,8 +3,8 @@ import Nav from "@components/Nav";
 import Provider from "@components/Provider";
 
 export const metadata = {
-    title: "Promptopia",
-    description: "Share prompt cuy",
+    title: "Kinder",
+    description: "Filtered Social Media",
 };
 
 export default function RootLayout({ children }) {
