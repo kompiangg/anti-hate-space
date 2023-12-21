@@ -1,7 +1,7 @@
 "use client";
 
 import Profile from "@components/Profile";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -9,7 +9,6 @@ import { useQuery } from "@tanstack/react-query";
 export default function ProfilePage() {
   const router = useRouter();
   const { data: session } = useSession();
-  console.log(session);
   const [posts, setPosts] = useState([]);
 
   // const handleEdit = async (promptID) => {
@@ -33,7 +32,7 @@ export default function ProfilePage() {
   // };
 
   const { isPending, error } = useQuery({
-    queryKey: [`posts:${session.user.id}`],
+    queryKey: [`posts:${session?.user?.id}`],
     queryFn: async () => {
       const res = await fetch(`/api/users/${session.user.id}/post`, {
         cache: "no-store",
