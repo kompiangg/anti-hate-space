@@ -70,7 +70,7 @@ class Post {
       .from("posts")
       .select("*, users:user_id(*)")
       .eq("user_id", userID)
-      .order("created_at", { ascending: true });
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.error(error);
@@ -95,7 +95,7 @@ class Post {
     const { data, error } = await supabase
       .from("posts")
       .select("*, users:user_id(*)")
-      .order("created_at", { ascending: true })
+      .order("created_at", { ascending: false })
       .range(offset, limit);
     if (error) {
       console.error(error);

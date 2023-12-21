@@ -1,72 +1,85 @@
-import Link from "next/link";
+"use client";
 
-export default function Form({
-  type,
-  post,
-  setPost,
-  submitting,
-  handleSubmit,
-}) {
+import { useState } from "react";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import HateSpeech from "./HateSpeech";
+
+export default function Form() {
+  const { data: session } = useSession();
+  const [content, setContent] = useState({
+    content: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [isHateSpeech, setIsHateSpeech] = useState(false);
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (formData) => {
+      setSubmitting(true);
+      return fetch("/api/posts", {
+        method: "POST",
+        body: JSON.stringify(formData),
+      });
+    },
+
+    onSuccess: (data) => {
+      if (data.status == 400) {
+        setIsHateSpeech(true);
+        setTimeout(() => {
+          setIsHateSpeech(false);
+        }, 3500);
+      }
+
+      setContent({ content: "" });
+      setSubmitting(false);
+      queryClient.invalidateQueries("posts");
+    },
+  });
+
+  const onSubmit = (event) => {
+    event.preventDefault();
+    mutation.mutate({
+      content: content.content,
+      user_id: session?.user.id,
+    });
+  };
+
   return (
-    <section className="flex-center w-full max-w-full flex-col max-sm:items-start">
-      <h1 className="head_text blue_gradient text-left max-sm:mx-2">
-        {type} Post
-      </h1>
+    <div className="w-full">
+      {isHateSpeech ? <HateSpeech /> : null}
 
-      <p className="desc max-w-md text-center max-sm:mx-2 max-sm:text-left">
-        {type} and share amazing prompts with the world, and let your
-        imagination run wild with any AI-powered platform.
-      </p>
-
-      <form
-        onSubmit={handleSubmit}
-        className="glassmorphism mt-10 flex w-full max-w-2xl flex-col gap-7"
-      >
-        <label>
-          <span className="font-satoshi text-base font-semibold text-gray-700">
-            Your AI Prompt
-          </span>
-
+      <div className="flex-start w-full rounded-lg bg-white p-6">
+        <Image
+          src={session?.user.image}
+          alt="Profile Picture"
+          className="rounded-full "
+          width={40}
+          height={40}
+        />
+        <form className="flex-relative w-full" onSubmit={onSubmit}>
           <textarea
-            value={post.prompt}
-            onChange={(e) => setPost({ ...post, prompt: e.target.value })}
-            placeholder="Tuliskan apa yang anda akan post..."
+            placeholder="Tuliskan apa yang anda pikirkan..."
+            value={content.content}
+            onChange={(e) =>
+              setContent({ ...content, content: e.target.value })
+            }
             required
-            className="form_textarea"
+            className="search_input"
           />
-        </label>
 
-        <label>
-          <span className="font-satoshi text-base font-semibold text-gray-700">
-            Tag {` `}
-            <span className="text-sm font-normal">
-              (#product, #backend, #database)
-            </span>
-          </span>
-
-          <input
-            type="text"
-            value={post.tag}
-            onChange={(e) => setPost({ ...post, tag: e.target.value })}
-            placeholder="#tag"
-            required
-            className="form_input"
-          />
-        </label>
-
-        <div className="flex-end mx-3 mb-5 gap-4 font-bold">
-          <Link href="/" className="text-sm text-gray-500">
-            Cancel
-          </Link>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="rounded-full bg-primary-orange px-5 py-1.5 text-sm text-white"
-          >
-            {submitting ? `${type}...` : type}
-          </button>
-        </div>
-      </form>
-    </section>
+          <div className="button_wrapper flex-end mt-6 flex">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="rounded-full bg-violet-500 px-4 py-2 font-bold text-white hover:bg-violet-700"
+            >
+              Unggah
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
