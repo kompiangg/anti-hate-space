@@ -6,21 +6,8 @@ import Post from "@models/post";
 import axios from "axios";
 
 export async function GET(req) {
-  if (!req.query) {
-    req.query = {};
-  }
-  let { limit, offset } = req.query;
-
-  if (!limit) {
-    limit = 10;
-  }
-
-  if (!offset) {
-    offset = 0;
-  }
-
   try {
-    const posts = await Post.getAll(limit, offset);
+    const posts = await Post.getAll();
 
     return createSuccessResponse(posts, 200);
   } catch (error) {

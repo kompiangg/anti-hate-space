@@ -91,12 +91,11 @@ class Post {
     });
   }
 
-  static async getAll(limit, offset) {
+  static async getAll() {
     const { data, error } = await supabase
       .from("posts")
       .select("*, users:user_id(*)")
-      .order("created_at", { ascending: false })
-      .range(offset, limit);
+      .order("created_at", { ascending: false });
     if (error) {
       console.error(error);
       throw error;

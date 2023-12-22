@@ -40,15 +40,15 @@ export default function PostCard({
 
       {session?.user.id === post.user.id && pathName === "/profile" && (
         <div className="flex-center gap-4 border-t border-gray-100 pt-3">
-          <p
+          {/* <p
             className="green_gradient cursor-pointer font-inter text-sm"
             onClick={() => handleEdit(post._id)}
           >
             Edit
-          </p>
+          </p> */}
           <p
             className="orange_gradient cursor-pointer font-inter text-sm"
-            onClick={() => handleDelete(post._id)}
+            onClick={() => handleDelete(post.id)}
           >
             Delete
           </p>

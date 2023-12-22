@@ -4,32 +4,36 @@ import Profile from "@components/Profile";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { data: session } = useSession();
   const [posts, setPosts] = useState([]);
+  const queryClient = useQueryClient();
 
-  // const handleEdit = async (promptID) => {
-  //   router.push(`/update-prompt?id=${promptID}`);
-  // };
+  const mutation = useMutation({
+    mutationFn: (postID) => {
+      const isConfirm = confirm("yakin mau hapus ni sob?");
+      if (!isConfirm) {
+        return;
+      }
 
-  // const handleDelete = async (promptID) => {
-  //   const isConf = confirm("yakin mau hapus ni sob?");
-  //   if (!isConf) {
-  //     return;
-  //   }
+      return fetch(`/api/posts/${postID}`, {
+        method: "DELETE",
+      });
+    },
 
-  //   const res = await fetch(`/api/prompt/${promptID}`, {
-  //     method: "DELETE",
-  //   });
+    onSuccess: () => {
+      queryClient.invalidateQueries(`posts:${session?.user?.id}`);
+    },
 
-  //   alert("Udah kehapus sob");
+    onMutate: async (postID) => {},
+  });
 
-  //   const filteredPrompt = posts.filter((p) => p._id !== promptID);
-  //   setPosts(filteredPrompt);
-  // };
+  const onClick = (postID) => {
+    mutation.mutate(postID);
+  };
 
   const { isPending, error } = useQuery({
     queryKey: [`posts:${session?.user?.id}`],
@@ -47,15 +51,15 @@ export default function ProfilePage() {
 
   if (error) return "An error has occurred: " + error.message;
 
-  console.log(posts);
-
   return (
-    <Profile
-      name="My"
-      desc="Welcome to your personalized profile page"
-      posts={posts}
-      // handleEdit={handleEdit}
-      // handleDelete={handleDelete}
-    />
+    <div>
+      <Profile
+        name="My"
+        desc="Welcome to your personalized profile page"
+        posts={posts}
+        // handleEdit={onSubmit}
+        handleDelete={onClick}
+      />
+    </div>
   );
 }
