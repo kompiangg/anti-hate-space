@@ -30,6 +30,8 @@ export default function Form() {
         setTimeout(() => {
           setIsHateSpeech(false);
         }, 3500);
+      } else {
+        setContent({ content: "" });
       }
 
       setSubmitting(false);
