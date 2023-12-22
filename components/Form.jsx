@@ -32,7 +32,6 @@ export default function Form() {
         }, 3500);
       }
 
-      setContent({ content: "" });
       setSubmitting(false);
       queryClient.invalidateQueries("posts");
     },
