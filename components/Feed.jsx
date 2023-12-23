@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export function PostCardList({ posts, handleUpdate, handleDelete }) {
   return (
-    <div className="mt-10 space-y-6">
+    <div className="mt-10 w-full space-y-6">
       {posts.map((post) => {
         return (
           <PostCard
@@ -48,7 +48,7 @@ export default function Feed() {
   if (error) return "An error has occurred: " + error.message;
 
   return (
-    <div>
+    <div className="w-full">
       {session ? (
         <section className="feed">
           <Form />
