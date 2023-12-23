@@ -48,7 +48,7 @@ export default function Feed() {
   if (error) return "An error has occurred: " + error.message;
 
   return (
-    <div className="w-full">
+    <div className="w-full flex justify-center">
       {session ? (
         <section className="feed">
           <Form />
