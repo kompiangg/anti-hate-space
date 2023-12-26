@@ -160,8 +160,7 @@
 
 /* PromptCard Component */
 .prompt_card {
-  @apply h-fit flex-1 break-words rounded-lg border border-gray-300 bg-white/20 bg-clip-padding p-6 pb-4 backdrop-blur-lg backdrop-filter;
-  width: 36rem;
+  @apply h-fit w-full flex-1 break-words rounded-lg border border-gray-300 bg-white/20 bg-clip-padding p-6 pb-4 backdrop-blur-lg backdrop-filter;
 }
 
 .flex-center {

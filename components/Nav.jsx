@@ -38,7 +38,7 @@ export default function Nav() {
         <p className="logo_text">Kinder</p>
       </Link>
 
-      <div className="max-sm:hidden sm:flex">
+      <div>
         {session?.user ? (
           <div className="flex gap-3 md:gap-5">
             <button type="button" onClick={signOut} className="outline_btn">

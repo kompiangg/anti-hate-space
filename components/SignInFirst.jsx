@@ -1,7 +1,7 @@
 export default function SignIn() {
   return (
     <div
-      className="mb-7 flex items-center rounded-lg border border-blue-300 bg-blue-50 p-4 text-sm text-blue-800"
+      className="mb-7 max-w-md flex rounded-lg border border-blue-300 bg-blue-50 p-4 text-sm text-blue-800"
       role="alert"
     >
       <svg
